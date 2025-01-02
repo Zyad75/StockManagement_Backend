@@ -31,7 +31,7 @@ const Product = mongoose.model("Product", {
   quantity: Number,
 });
 
-//----------- Route post pour créer un produit et le stocker en DB
+//----------- Route post pour créer un produit et le stocker en DB -----------//
 app.post("/create", fileUpload(), async (req, res) => {
   try {
     const existingProduct = await Product.findOne({
@@ -67,7 +67,7 @@ app.post("/create", fileUpload(), async (req, res) => {
       quantity: req.body.quantity,
     });
     await newProduct.save();
-    res.json("Product successfuly created");
+    res.json({ message: "Product successfuly created" });
   } catch (error) {
     console.log(error);
   }
