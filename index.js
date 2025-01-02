@@ -34,16 +34,6 @@ const Product = mongoose.model("Product", {
 //----------- Route post pour créer un produit et le stocker en DB -----------//
 app.post("/create", fileUpload(), async (req, res) => {
   try {
-    const existingProduct = await Product.findOne({
-      name: req.body.name,
-      brand: req.body.brand,
-    });
-    if (existingProduct) {
-      return res.status(400).json({
-        error:
-          "This product is already repertoried in stock, you still can update the product quantity ",
-      });
-    }
     if (
       !req.body.name ||
       !req.body.price ||
@@ -58,7 +48,23 @@ app.post("/create", fileUpload(), async (req, res) => {
       convertToBase64(req.files.image)
     );
     console.log(savedPicture);
-
+    const existingProduct = await Product.findOne({
+      name: req.body.name,
+      brand: req.body.brand,
+      image: savedPicture,
+    });
+    const existingProductImage = await Product.findOne({
+      image: savedPicture,
+    });
+    const existingProductName = await Product.findOne({
+      name: req.body.name,
+    });
+    if ((existingProduct || existingProductImage, existingProductName)) {
+      return res.status(400).json({
+        error:
+          "This product is already repertoried in stock, you still can update the product quantity ",
+      });
+    }
     const newProduct = new Product({
       name: req.body.name,
       brand: req.body.brand,
@@ -68,6 +74,20 @@ app.post("/create", fileUpload(), async (req, res) => {
     });
     await newProduct.save();
     res.json({ message: "Product successfuly created" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//---------- Route get pour obtenir la liste de tout les produits ---------//
+
+app.get("/products", async (req, res) => {
+  try {
+    const productsList = await Product.find();
+    if (!productsList) {
+      return res.status(400).json({ message: " Empty Stock" });
+    }
+    res.json(productsList);
   } catch (error) {
     console.log(error);
   }
