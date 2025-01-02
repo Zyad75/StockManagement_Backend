@@ -85,7 +85,7 @@ app.get("/products", async (req, res) => {
   try {
     const productsList = await Product.find();
     if (!productsList) {
-      return res.status(400).json({ message: " Empty Stock" });
+      return res.status(400).json({ message: "  Stock is empty" });
     }
     res.json(productsList);
   } catch (error) {
