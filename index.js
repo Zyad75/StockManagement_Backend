@@ -39,7 +39,7 @@ app.post("/create", fileUpload(), async (req, res) => {
       !req.body.price ||
       !req.body.brand ||
       !req.body.quantity ||
-      !req.files.image
+      !req.files
     ) {
       return res.status(400).json({ error: "missing parameters" });
     }
