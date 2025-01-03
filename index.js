@@ -131,6 +131,23 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+app.delete("/delete/:id", async (req, res) => {
+  try {
+    if (req.params.id) {
+      // si l'id a bien été transmis
+
+      // On recherche le "Product" à modifier à partir de son id et on le supprime :
+      await Product.findByIdAndDelete(req.params.id);
+
+      // On répond au client :
+      res.json({ message: "Product removed" });
+    } else {
+      return res.status(400).json({ messsage: "Missing id" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 app.all("*", (req, res) => {
   res.status(404).json({ error: "all route" });
