@@ -136,9 +136,8 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
 //----------- Route pour supprimer un produit -----------------//
 app.delete("/delete/:id", async (req, res) => {
   try {
+    // si l'id a bien été transmis
     if (req.params.id) {
-      // si l'id a bien été transmis
-
       // On recherche le "Product" à modifier à partir de son id et on le supprime :
       const productToDelete = await Product.findByIdAndDelete(req.params.id);
 
