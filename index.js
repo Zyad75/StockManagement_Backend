@@ -133,6 +133,7 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+//----------- Route pour supprimer un produit -----------------//
 app.delete("/delete/:id", async (req, res) => {
   try {
     if (req.params.id) {
@@ -140,6 +141,8 @@ app.delete("/delete/:id", async (req, res) => {
 
       // On recherche le "Product" à modifier à partir de son id et on le supprime :
       const productToDelete = await Product.findByIdAndDelete(req.params.id);
+
+      // reponse si il n'y a pas de produit répertorié ayant cet ID
       if (!productToDelete) {
         return res
           .status(400)
