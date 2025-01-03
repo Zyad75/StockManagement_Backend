@@ -99,15 +99,17 @@ app.get("/products", async (req, res) => {
 app.put("/update/:id", fileUpload(), async (req, res) => {
   try {
     console.log("route : PUT /update/:id");
-    console.log(req.params);
-    console.log(req.body);
+    console.log("req.params =>", req.params);
+    console.log("req.body =>", req.body);
     if (
       req.params.id &&
       (req.body.price || req.files.image || req.body.quantity)
     ) {
       // si l'id et les informations à modifier ont bien été transmis
       const product = await Product.findById(req.params.id);
-
+      if (!product) {
+        return res.json({ message: "error, product not found" });
+      }
       // On modifie les clés pour l'objet "product" trouvé :
       if (req.body.price) {
         product.price = req.body.price;
@@ -115,7 +117,7 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
       if (req.body.quantity) {
         product.quantity = req.body.quantity;
       }
-      if (req.files.image) {
+      if (req.files) {
         product.image = req.files.image;
       }
       // on sauvegarde les modifications en BDD :
@@ -137,12 +139,16 @@ app.delete("/delete/:id", async (req, res) => {
       // si l'id a bien été transmis
 
       // On recherche le "Product" à modifier à partir de son id et on le supprime :
-      await Product.findByIdAndDelete(req.params.id);
-
+      const productToDelete = await Product.findByIdAndDelete(req.params.id);
+      if (!productToDelete) {
+        return res
+          .status(400)
+          .json({ message: "Error, product doesn't exists !" });
+      }
       // On répond au client :
       res.json({ message: "Product removed" });
     } else {
-      return res.status(400).json({ messsage: "Missing id" });
+      return res.status(400).json({ messsage: "Missing id on params" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
