@@ -85,11 +85,50 @@ app.get("/products", async (req, res) => {
   try {
     const productsList = await Product.find();
     if (!productsList) {
+      // si il n y as pas de produits
       return res.status(400).json({ message: "  Stock is empty" });
     }
-    res.json(productsList);
+    res.json(productsList); // tableau contenant tout les produits
   } catch (error) {
     console.log(error);
+  }
+});
+
+//------ Route put pour update les infos du produit (changement de quantité ou de photo) -------//
+
+app.put("/update/:id", fileUpload(), async (req, res) => {
+  try {
+    console.log("route : PUT /update/:id");
+    console.log(req.params);
+    console.log(req.body);
+    if (
+      req.params.id &&
+      (req.body.price || req.files.image || req.body.quantity)
+    ) {
+      // si l'id et les informations à modifier ont bien été transmis
+      const product = await Product.findById(req.params.id);
+
+      // On modifie les clés pour l'objet "product" trouvé :
+      if (req.body.price) {
+        product.price = req.body.price;
+      }
+      if (req.body.quantity) {
+        product.quantity = req.body.quantity;
+      }
+      if (req.files.image) {
+        product.image = req.files.image;
+      }
+      // on sauvegarde les modifications en BDD :
+      await product.save();
+
+      // On retourne le document "product" :
+      res.status(200).json(product);
+    } else {
+      return res.status(400).json({ message: "Missing parameter" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
 });
 
