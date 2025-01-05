@@ -59,7 +59,7 @@ app.post("/create", fileUpload(), async (req, res) => {
     const existingProductName = await Product.findOne({
       name: req.body.name,
     });
-    if ((existingProduct || existingProductImage, existingProductName)) {
+    if (existingProduct || existingProductImage || existingProductName) {
       return res.status(400).json({
         error:
           "This product is already repertoried in stock, you still can update the product quantity ",
@@ -124,7 +124,11 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
       await product.save();
 
       // On retourne le document "product" :
-      res.status(200).json(product);
+      res
+        .status(200)
+        .json({
+          message: `The product ${product.name} was successfuly updated`,
+        });
     } else {
       return res.status(400).json({ message: "Missing parameter" });
     }
