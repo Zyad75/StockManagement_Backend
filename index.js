@@ -43,6 +43,11 @@ app.post("/create", fileUpload(), async (req, res) => {
     ) {
       return res.status(400).json({ error: "missing parameters" });
     }
+    if (req.body.quantity < 0) {
+      return res
+        .status(400)
+        .json({ message: "Warning, please enter a valid quantity number" });
+    }
     console.log(req.body);
     const savedPicture = await cloudinary.uploader.upload(
       convertToBase64(req.files.image)
@@ -101,6 +106,11 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
     console.log("route : PUT /update/:id");
     console.log("req.params =>", req.params);
     console.log("req.body =>", req.body);
+    if (req.body.quantity < 0) {
+      return res
+        .status(400)
+        .json({ message: "Warning, please enter a valid quantity number" });
+    }
     if (
       req.params.id &&
       (req.body.price || req.files.image || req.body.quantity)
@@ -117,18 +127,19 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
       if (req.body.quantity) {
         product.quantity = req.body.quantity;
       }
+      const savedPicture = await cloudinary.uploader.upload(
+        convertToBase64(req.files.image)
+      );
       if (req.files) {
-        product.image = req.files.image;
+        product.image = savedPicture;
       }
       // on sauvegarde les modifications en BDD :
       await product.save();
 
       // On retourne le document "product" :
-      res
-        .status(200)
-        .json({
-          message: `The product ${product.name} was successfuly updated`,
-        });
+      res.status(200).json({
+        message: `The product ${product.name} was successfuly updated \n new product quantity : ${product.quantity}\n new product price : ${product.price} \n new product image : ${product.image.secure_url}`,
+      });
     } else {
       return res.status(400).json({ message: "Missing parameter" });
     }
