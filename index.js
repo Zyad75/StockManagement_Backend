@@ -126,6 +126,9 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
     console.log("route : PUT /update/:id");
     console.log("req.params =>", req.params);
     console.log("req.body =>", req.body);
+    if (!req.body.price || !req.body.quantity || !req.files) {
+      return res.status(400).json({ message: "Missing parameter" });
+    }
     if (req.body.quantity < 0) {
       return res
         .status(400)
@@ -166,8 +169,6 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
       res.status(200).json({
         message: `The product ${product.name} was successfuly updated \n new product quantity : ${product.quantity} \n new product price : ${product.price} \n new product image : ${product.image.secure_url}`,
       });
-    } else {
-      return res.status(400).json({ message: "Missing parameter" });
     }
   } catch (error) {
     console.log(error);
