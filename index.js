@@ -48,6 +48,11 @@ app.post("/create", fileUpload(), async (req, res) => {
         .status(400)
         .json({ message: "Warning, please enter a valid quantity number" });
     }
+    if (req.body.price < 0) {
+      return res
+        .status(400)
+        .json({ message: "Warning, please enter a valid price" });
+    }
     console.log(req.body);
     const savedPicture = await cloudinary.uploader.upload(
       convertToBase64(req.files.image)
@@ -65,7 +70,7 @@ app.post("/create", fileUpload(), async (req, res) => {
       name: req.body.name,
     });
     if (existingProduct || existingProductImage || existingProductName) {
-      return res.status(400).json({
+      return res.status(409).json({
         error:
           "This product is already repertoried in stock, you still can update the product quantity ",
       });
@@ -138,7 +143,7 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
 
       // On retourne le document "product" :
       res.status(200).json({
-        message: `The product ${product.name} was successfuly updated \n new product quantity : ${product.quantity}\n new product price : ${product.price} \n new product image : ${product.image.secure_url}`,
+        message: `The product ${product.name} was successfuly updated \n new product quantity : ${product.quantity} \n new product price : ${product.price} \n new product image : ${product.image.secure_url}`,
       });
     } else {
       return res.status(400).json({ message: "Missing parameter" });
@@ -162,7 +167,7 @@ app.delete("/delete/:id", async (req, res) => {
           .status(400)
           .json({ message: "Error, product doesn't exists !" });
       }
-      // On répond au client :
+      // On répond au client :c
       res.json({ message: "Product removed" });
     } else {
       return res.status(400).json({ messsage: "Missing id on params" });
