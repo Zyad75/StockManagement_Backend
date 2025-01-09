@@ -152,10 +152,11 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
       if (req.body.quantity) {
         product.quantity = req.body.quantity;
       }
-      const savedPicture = await cloudinary.uploader.upload(
-        convertToBase64(req.files.image)
-      );
+
       if (req.files) {
+        const savedPicture = await cloudinary.uploader.upload(
+          convertToBase64(req.files.image)
+        );
         product.image = savedPicture;
       }
       // on sauvegarde les modifications en BDD :
