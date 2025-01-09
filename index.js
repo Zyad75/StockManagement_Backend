@@ -131,6 +131,11 @@ app.put("/update/:id", fileUpload(), async (req, res) => {
         .status(400)
         .json({ message: "Warning, please enter a valid quantity number" });
     }
+    if (req.body.price < 0) {
+      return res
+        .status(400)
+        .json({ message: "Warning, please enter a valid price" });
+    }
     if (
       req.params.id &&
       (req.body.price || req.files.image || req.body.quantity)
