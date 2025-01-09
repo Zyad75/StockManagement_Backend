@@ -104,6 +104,21 @@ app.get("/products", async (req, res) => {
   }
 });
 
+//---------- Route get pour obtenir les infos d'un produit ---------//
+
+app.get("/product/:id", async (req, res) => {
+  try {
+    const product = await Product.find({ _id: req.params.id });
+    if (!product) {
+      // si il n y as pas de produit
+      return res.status(400).json({ message: "Product not founded" });
+    }
+    res.json(product); // tableau contenant tout les produits
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 //------ Route put pour update les infos du produit (changement de quantité ou de photo) -------//
 
 app.put("/update/:id", fileUpload(), async (req, res) => {
