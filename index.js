@@ -202,6 +202,7 @@ app.delete("/delete/:id", async (req, res) => {
 app.all("*", (req, res) => {
   res.status(404).json({ error: "all route" });
 });
-app.listen(3000, () => {
+const PORT = 3000;
+app.listen(process.env.PORT || PORT, () => {
   console.log("Server Started 🩲");
 });
